@@ -1,39 +1,167 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Clientes</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <form id="form-cadastro">
-            <h2>Cadastro de Cliente</h2>
+<import pygame
+import sys
+import math
+
+# Inicialização
+pygame.init()
+LARGURA, ALTURA = 1000, 600
+tela = pygame.display.set_mode((LARGURA, ALTURA))
+pygame.display.set_caption("Sinuca - Jogo Simples")
+clock = pygame.time.Clock()
+
+# Cores
+VERDE_MESA = (0, 100, 0)
+MARROM = (139, 69, 19)
+BRANCO = (255, 255, 255)
+PRETO = (0, 0, 0)
+VERMELHO = (255, 0, 0)
+AZUL = (0, 0, 255)
+AMARELO = (255, 255, 0)
+
+# Física
+GRAVIDADE = 0.0
+ATRITO = 0.98
+
+class Bola:
+    def __init__(self, x, y, cor, raio=15):
+        self.x = x
+        self.y = y
+        self.vel_x = 0
+        self.vel_y = 0
+        self.cor = cor
+        self.raio = raio
+        self.mass = 1
+
+    def desenhar(self):
+        pygame.draw.circle(tela, self.cor, (int(self.x), int(self.y)), self.raio)
+        # Brilho
+        pygame.draw.circle(tela, BRANCO, (int(self.x - 5), int(self.y - 5)), 5)
+
+    def atualizar(self):
+        self.x += self.vel_x
+        self.y += self.vel_y
+        self.vel_x *= ATRITO
+        self.vel_y *= ATRITO
+
+        # Parar bola quando muito lenta
+        if abs(self.vel_x) < 0.1 and abs(self.vel_y) < 0.1:
+            self.vel_x = 0
+            self.vel_y = 0
+
+    def colisao_parede(self):
+        if self.x - self.raio < 50 or self.x + self.raio > LARGURA - 50:
+            self.vel_x *= -0.95
+        if self.y - self.raio < 50 or self.y + self.raio > ALTURA - 50:
+            self.vel_y *= -0.95
+
+def distancia(b1, b2):
+    return math.hypot(b1.x - b2.x, b1.y - b2.y)
+
+def colisao_bolas(b1, b2):
+    if distancia(b1, b2) < b1.raio + b2.raio:
+        dx = b2.x - b1.x
+        dy = b2.y - b1.y
+        dist = distancia(b1, b2)
+        
+        if dist == 0:
+            return
+        
+        nx = dx / dist
+        ny = dy / dist
+        
+        # Velocidade relativa
+        dvx = b2.vel_x - b1.vel_x
+        dvy = b2.vel_y - b1.vel_y
+        
+        # Componente da velocidade ao longo da normal
+        p = 2 * (dvx * nx + dvy * ny) / (b1.mass + b2.mass)
+        
+        b1.vel_x += p * b1.mass * nx
+        b1.vel_y += p * b1.mass * ny
+        b2.vel_x -= p * b2.mass * nx
+        b2.vel_y -= p * b2.mass * ny
+
+# Criar bolas
+bolas = []
+
+# Bola branca (taco)
+branca = Bola(300, 300, BRANCO)
+bolas.append(branca)
+
+# Bolas coloridas
+cores = [VERMELHO, AZUL, AMARELO, (255, 0, 255), (0, 255, 255)]
+for i in range(5):
+    bola = Bola(650 + i*40, 250 + (i%2)*50, cores[i%5])
+    bolas.append(bola)
+
+# Variáveis do taco
+taco_puxado = False
+forca = 0
+angulo = 0
+
+rodando = True
+while rodando:
+    tela.fill((20, 20, 20))
+    
+    # Desenhar mesa
+    pygame.draw.rect(tela, VERDE_MESA, (50, 50, LARGURA-100, ALTURA-100))
+    pygame.draw.rect(tela, MARROM, (40, 40, LARGURA-80, ALTURA-80), 20)
+    
+    for evento in pygame.event.get():
+        if evento.type == pygame.QUIT:
+            rodando = False
             
-            <div class="input-group">
-                <label for="nome">Nome Completo</label>
-                <input type="text" id="nome" placeholder="Digite o nome" required>
-            </div>
+        if evento.type == pygame.MOUSEBUTTONDOWN and all(abs(b.vel_x) < 0.5 and abs(b.vel_y) < 0.5 for b in bolas):
+            taco_puxado = True
+            mx, my = pygame.mouse.get_pos()
+            angulo = math.atan2(my - branca.y, mx - branca.x)
+            
+        if evento.type == pygame.MOUSEBUTTONUP and taco_puxado:
+            forca = min(forca, 25)
+            branca.vel_x = math.cos(angulo) * forca
+            branca.vel_y = math.sin(angulo) * forca
+            taco_puxado = False
+            forca = 0
 
-            <div class="input-group">
-                <label for="email">E-mail</label>
-                <input type="email" id="email" placeholder="exemplo@email.com" required>
-            </div>
+    # Atualizar bolas
+    for bola in bolas:
+        bola.atualizar()
+        bola.colisao_parede()
 
-            <div class="row">
-                <div class="input-group">
-                    <label for="telefone">Telefone</label>
-                    <input type="tel" id="telefone" placeholder="(00) 00000-0000">
-                </div>
-                <div class="input-group">
-                    <label for="nascimento">Data de Nascimento</label>
-                    <input type="date" id="nascimento">
-                </div>
-            </div>
+    # Colisões entre bolas
+    for i in range(len(bolas)):
+        for j in range(i+1, len(bolas)):
+            colisao_bolas(bolas[i], bolas[j])
 
-            <button type="submit">Cadastrar Cliente</button>
-        </form>
-    </div>
-</body>
-</html>
+    # Desenhar bolas
+    for bola in bolas:
+        bola.desenhar()
+
+    # Desenhar taco
+    if taco_puxado and all(abs(b.vel_x) < 0.5 and abs(b.vel_y) < 0.5 for b in bolas):
+        mx, my = pygame.mouse.get_pos()
+        angulo = math.atan2(my - branca.y, mx - branca.x)
+        forca = math.hypot(mx - branca.x, my - branca.y) / 8
+        forca = min(forca, 25)
+        
+        # Linha de mira
+        end_x = branca.x + math.cos(angulo) * 300
+        end_y = branca.y + math.sin(angulo) * 300
+        pygame.draw.line(tela, (255, 255, 200), (branca.x, branca.y), (end_x, end_y), 2)
+        
+        # Taco
+        taco_x = branca.x - math.cos(angulo) * (30 + forca*2)
+        taco_y = branca.y - math.sin(angulo) * (30 + forca*2)
+        pygame.draw.line(tela, (139, 69, 19), (taco_x, taco_y), 
+                        (branca.x - math.cos(angulo)*30, branca.y - math.sin(angulo)*30), 8)
+
+    # Texto
+    font = pygame.font.SysFont(None, 36)
+    texto = font.render("Clique e arraste para jogar o taco!", True, BRANCO)
+    tela.blit(texto, (20, 10))
+
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()
+sys.exit()
