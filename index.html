@@ -1,167 +1,349 @@
-<import pygame
-import sys
-import math
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estacionamento - Gerador de GR e CPF</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-# Inicialização
-pygame.init()
-LARGURA, ALTURA = 1000, 600
-tela = pygame.display.set_mode((LARGURA, ALTURA))
-pygame.display.set_caption("Sinuca - Jogo Simples")
-clock = pygame.time.Clock()
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            min-height: 100vh;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-# Cores
-VERDE_MESA = (0, 100, 0)
-MARROM = (139, 69, 19)
-BRANCO = (255, 255, 255)
-PRETO = (0, 0, 0)
-VERMELHO = (255, 0, 0)
-AZUL = (0, 0, 255)
-AMARELO = (255, 255, 0)
+        .container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-# Física
-GRAVIDADE = 0.0
-ATRITO = 0.98
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+            color: #00d2ff;
+        }
 
-class Bola:
-    def __init__(self, x, y, cor, raio=15):
-        self.x = x
-        self.y = y
-        self.vel_x = 0
-        self.vel_y = 0
-        self.cor = cor
-        self.raio = raio
-        self.mass = 1
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
 
-    def desenhar(self):
-        pygame.draw.circle(tela, self.cor, (int(self.x), int(self.y)), self.raio)
-        # Brilho
-        pygame.draw.circle(tela, BRANCO, (int(self.x - 5), int(self.y - 5)), 5)
+        .vagas-box {
+            background: rgba(0, 210, 255, 0.15);
+            border: 2px solid #00d2ff;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
 
-    def atualizar(self):
-        self.x += self.vel_x
-        self.y += self.vel_y
-        self.vel_x *= ATRITO
-        self.vel_y *= ATRITO
+        .vagas-numero {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #00d2ff;
+            line-height: 1;
+        }
 
-        # Parar bola quando muito lenta
-        if abs(self.vel_x) < 0.1 and abs(self.vel_y) < 0.1:
-            self.vel_x = 0
-            self.vel_y = 0
+        .vagas-texto {
+            font-size: 1.1rem;
+            margin-top: 5px;
+            color: #ccc;
+        }
 
-    def colisao_parede(self):
-        if self.x - self.raio < 50 or self.x + self.raio > LARGURA - 50:
-            self.vel_x *= -0.95
-        if self.y - self.raio < 50 or self.y + self.raio > ALTURA - 50:
-            self.vel_y *= -0.95
+        .botoes {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
 
-def distancia(b1, b2):
-    return math.hypot(b1.x - b2.x, b1.y - b2.y)
+        button {
+            flex: 1;
+            min-width: 140px;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
 
-def colisao_bolas(b1, b2):
-    if distancia(b1, b2) < b1.raio + b2.raio:
-        dx = b2.x - b1.x
-        dy = b2.y - b1.y
-        dist = distancia(b1, b2)
-        
-        if dist == 0:
-            return
-        
-        nx = dx / dist
-        ny = dy / dist
-        
-        # Velocidade relativa
-        dvx = b2.vel_x - b1.vel_x
-        dvy = b2.vel_y - b1.vel_y
-        
-        # Componente da velocidade ao longo da normal
-        p = 2 * (dvx * nx + dvy * ny) / (b1.mass + b2.mass)
-        
-        b1.vel_x += p * b1.mass * nx
-        b1.vel_y += p * b1.mass * ny
-        b2.vel_x -= p * b2.mass * nx
-        b2.vel_y -= p * b2.mass * ny
+        .btn-estacionar {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            color: #fff;
+        }
 
-# Criar bolas
-bolas = []
+        .btn-estacionar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 176, 155, 0.4);
+        }
 
-# Bola branca (taco)
-branca = Bola(300, 300, BRANCO)
-bolas.append(branca)
+        .btn-liberar {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: #fff;
+        }
 
-# Bolas coloridas
-cores = [VERMELHO, AZUL, AMARELO, (255, 0, 255), (0, 255, 255)]
-for i in range(5):
-    bola = Bola(650 + i*40, 250 + (i%2)*50, cores[i%5])
-    bolas.append(bola)
+        .btn-liberar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 65, 108, 0.4);
+        }
 
-# Variáveis do taco
-taco_puxado = False
-forca = 0
-angulo = 0
+        .btn-limpar {
+            background: #333;
+            color: #fff;
+        }
 
-rodando = True
-while rodando:
-    tela.fill((20, 20, 20))
-    
-    # Desenhar mesa
-    pygame.draw.rect(tela, VERDE_MESA, (50, 50, LARGURA-100, ALTURA-100))
-    pygame.draw.rect(tela, MARROM, (40, 40, LARGURA-80, ALTURA-80), 20)
-    
-    for evento in pygame.event.get():
-        if evento.type == pygame.QUIT:
-            rodando = False
+        .btn-limpar:hover {
+            background: #444;
+        }
+
+        .lista-veiculos {
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .veiculo {
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 5px solid #00d2ff;
+            animation: entrar 0.4s ease;
+        }
+
+        @keyframes entrar {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .veiculo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .placa {
+            font-size: 1.3rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #00d2ff;
+        }
+
+        .hora {
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        .info {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #ddd;
+        }
+
+        .info span {
+            color: #96c93d;
+            font-weight: 600;
+        }
+
+        .vazio {
+            text-align: center;
+            color: #777;
+            padding: 40px 20px;
+            font-style: italic;
+        }
+
+        /* Scrollbar personalizada */
+        .lista-veiculos::-webkit-scrollbar {
+            width: 8px;
+        }
+        .lista-veiculos::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+        .lista-veiculos::-webkit-scrollbar-thumb {
+            background: #00d2ff;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 Estacionamento Digital</h1>
+        <p class="subtitle">Gera CPF + GR automaticamente • Controle de vagas</p>
+
+        <div class="vagas-box">
+            <div class="vagas-numero" id="vagasSobrando">12</div>
+            <div class="vagas-texto">vagas sobrando</div>
+        </div>
+
+        <div class="botoes">
+            <button class="btn-estacionar" onclick="estacionar()">Estacionar Veículo</button>
+            <button class="btn-liberar" onclick="liberar()">Liberar 1 Vaga</button>
+            <button class="btn-limpar" onclick="limparTudo()">Limpar Tudo</button>
+        </div>
+
+        <div class="lista-veiculos" id="lista">
+            <div class="vazio">Nenhum veículo estacionado ainda...</div>
+        </div>
+    </div>
+
+    <script>
+        // Configuração inicial
+        let vagasTotais = 12;
+        let vagasOcupadas = 0;
+        let veiculos = [];
+
+        // Gera CPF válido (com dígitos verificadores corretos)
+        function gerarCPF() {
+            const n = Array.from({length: 9}, () => Math.floor(Math.random() * 10));
             
-        if evento.type == pygame.MOUSEBUTTONDOWN and all(abs(b.vel_x) < 0.5 and abs(b.vel_y) < 0.5 for b in bolas):
-            taco_puxado = True
-            mx, my = pygame.mouse.get_pos()
-            angulo = math.atan2(my - branca.y, mx - branca.x)
+            // Primeiro dígito verificador
+            let d1 = n.reduce((acc, num, i) => acc + num * (10 - i), 0) % 11;
+            d1 = d1 < 2 ? 0 : 11 - d1;
             
-        if evento.type == pygame.MOUSEBUTTONUP and taco_puxado:
-            forca = min(forca, 25)
-            branca.vel_x = math.cos(angulo) * forca
-            branca.vel_y = math.sin(angulo) * forca
-            taco_puxado = False
-            forca = 0
+            // Segundo dígito verificador
+            let d2 = [...n, d1].reduce((acc, num, i) => acc + num * (11 - i), 0) % 11;
+            d2 = d2 < 2 ? 0 : 11 - d2;
 
-    # Atualizar bolas
-    for bola in bolas:
-        bola.atualizar()
-        bola.colisao_parede()
+            const cpf = [...n, d1, d2].join('');
+            return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+        }
 
-    # Colisões entre bolas
-    for i in range(len(bolas)):
-        for j in range(i+1, len(bolas)):
-            colisao_bolas(bolas[i], bolas[j])
+        // Gera GR (Guia de Recolhimento fictícia)
+        function gerarGR() {
+            const ano = new Date().getFullYear();
+            const seq = String(Math.floor(Math.random() * 999999)).padStart(6, '0');
+            const controle = String(Math.floor(Math.random() * 99)).padStart(2, '0');
+            return `GR-${ano}-${seq}-${controle}`;
+        }
 
-    # Desenhar bolas
-    for bola in bolas:
-        bola.desenhar()
+        // Gera placa aleatória (padrão Mercosul)
+        function gerarPlaca() {
+            const letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const l1 = letras[Math.floor(Math.random() * 26)];
+            const l2 = letras[Math.floor(Math.random() * 26)];
+            const l3 = letras[Math.floor(Math.random() * 26)];
+            const n1 = Math.floor(Math.random() * 10);
+            const l4 = letras[Math.floor(Math.random() * 26)];
+            const n2 = Math.floor(Math.random() * 10);
+            const n3 = Math.floor(Math.random() * 10);
+            return `${l1}${l2}${l3}${n1}${l4}${n2}${n3}`;
+        }
 
-    # Desenhar taco
-    if taco_puxado and all(abs(b.vel_x) < 0.5 and abs(b.vel_y) < 0.5 for b in bolas):
-        mx, my = pygame.mouse.get_pos()
-        angulo = math.atan2(my - branca.y, mx - branca.x)
-        forca = math.hypot(mx - branca.x, my - branca.y) / 8
-        forca = min(forca, 25)
-        
-        # Linha de mira
-        end_x = branca.x + math.cos(angulo) * 300
-        end_y = branca.y + math.sin(angulo) * 300
-        pygame.draw.line(tela, (255, 255, 200), (branca.x, branca.y), (end_x, end_y), 2)
-        
-        # Taco
-        taco_x = branca.x - math.cos(angulo) * (30 + forca*2)
-        taco_y = branca.y - math.sin(angulo) * (30 + forca*2)
-        pygame.draw.line(tela, (139, 69, 19), (taco_x, taco_y), 
-                        (branca.x - math.cos(angulo)*30, branca.y - math.sin(angulo)*30), 8)
+        // Formata hora atual
+        function horaAtual() {
+            const agora = new Date();
+            return agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
 
-    # Texto
-    font = pygame.font.SysFont(None, 36)
-    texto = font.render("Clique e arraste para jogar o taco!", True, BRANCO)
-    tela.blit(texto, (20, 10))
+        // Atualiza o contador de vagas
+        function atualizarVagas() {
+            const sobrando = vagasTotais - vagasOcupadas;
+            document.getElementById('vagasSobrando').textContent = sobrando;
+            
+            // Muda a cor se estiver quase cheio
+            const box = document.querySelector('.vagas-box');
+            if (sobrando <= 3) {
+                box.style.borderColor = '#ff416c';
+                document.getElementById('vagasSobrando').style.color = '#ff416c';
+            } else {
+                box.style.borderColor = '#00d2ff';
+                document.getElementById('vagasSobrando').style.color = '#00d2ff';
+            }
+        }
 
-    pygame.display.flip()
-    clock.tick(60)
+        // Renderiza a lista de veículos
+        function renderizar() {
+            const lista = document.getElementById('lista');
+            
+            if (veiculos.length === 0) {
+                lista.innerHTML = '<div class="vazio">Nenhum veículo estacionado ainda...</div>';
+                return;
+            }
 
-pygame.quit()
-sys.exit()
+            lista.innerHTML = veiculos.map((v, i) => `
+                <div class="veiculo">
+                    <div class="veiculo-header">
+                        <div class="placa">${v.placa}</div>
+                        <div class="hora">${v.hora}</div>
+                    </div>
+                    <div class="info">
+                        CPF: <span>${v.cpf}</span><br>
+                        GR: <span>${v.gr}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Estacionar veículo
+        function estacionar() {
+            if (vagasOcupadas >= vagasTotais) {
+                alert('🚫 Estacionamento lotado! Não há vagas sobrando.');
+                return;
+            }
+
+            const veiculo = {
+                placa: gerarPlaca(),
+                cpf: gerarCPF(),
+                gr: gerarGR(),
+                hora: horaAtual()
+            };
+
+            veiculos.unshift(veiculo); // adiciona no topo
+            vagasOcupadas++;
+            
+            atualizarVagas();
+            renderizar();
+        }
+
+        // Liberar 1 vaga (remove o mais antigo)
+        function liberar() {
+            if (vagasOcupadas === 0) {
+                alert('Não há veículos para liberar.');
+                return;
+            }
+
+            veiculos.pop(); // remove o último (mais antigo)
+            vagasOcupadas--;
+            
+            atualizarVagas();
+            renderizar();
+        }
+
+        // Limpar tudo
+        function limparTudo() {
+            if (confirm('Tem certeza que deseja liberar todas as vagas?')) {
+                veiculos = [];
+                vagasOcupadas = 0;
+                atualizarVagas();
+                renderizar();
+            }
+        }
+
+        // Inicializa
+        atualizarVagas();
+    </script>
+</body>
+</html>
