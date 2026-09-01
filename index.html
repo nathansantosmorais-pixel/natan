@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estacionamento - Gerador de GR e CPF</title>
+    <title>Estacionamento Digital - Com Nome dos Veículos</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             min-height: 100vh;
             color: #fff;
             display: flex;
@@ -23,20 +23,20 @@
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(12px);
             border-radius: 20px;
             padding: 30px;
             width: 100%;
-            max-width: 700px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            max-width: 750px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         h1 {
             text-align: center;
-            margin-bottom: 10px;
-            font-size: 1.8rem;
+            margin-bottom: 8px;
+            font-size: 1.9rem;
             color: #00d2ff;
         }
 
@@ -48,30 +48,31 @@
         }
 
         .vagas-box {
-            background: rgba(0, 210, 255, 0.15);
+            background: rgba(0, 210, 255, 0.12);
             border: 2px solid #00d2ff;
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: 16px;
+            padding: 22px;
             text-align: center;
             margin-bottom: 25px;
+            transition: all 0.3s ease;
         }
 
         .vagas-numero {
-            font-size: 3.5rem;
-            font-weight: bold;
+            font-size: 3.8rem;
+            font-weight: 700;
             color: #00d2ff;
             line-height: 1;
         }
 
         .vagas-texto {
             font-size: 1.1rem;
-            margin-top: 5px;
+            margin-top: 6px;
             color: #ccc;
         }
 
         .botoes {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 25px;
             flex-wrap: wrap;
         }
@@ -79,7 +80,7 @@
         button {
             flex: 1;
             min-width: 140px;
-            padding: 14px 20px;
+            padding: 14px 18px;
             border: none;
             border-radius: 12px;
             font-size: 1rem;
@@ -90,76 +91,94 @@
 
         .btn-estacionar {
             background: linear-gradient(135deg, #00b09b, #96c93d);
-            color: #fff;
+            color: white;
         }
 
         .btn-estacionar:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 176, 155, 0.4);
+            box-shadow: 0 8px 20px rgba(0, 176, 155, 0.45);
         }
 
         .btn-liberar {
             background: linear-gradient(135deg, #ff416c, #ff4b2b);
-            color: #fff;
+            color: white;
         }
 
         .btn-liberar:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 65, 108, 0.4);
+            box-shadow: 0 8px 20px rgba(255, 65, 108, 0.45);
         }
 
         .btn-limpar {
-            background: #333;
-            color: #fff;
+            background: #2c2c2c;
+            color: #eee;
         }
 
         .btn-limpar:hover {
-            background: #444;
+            background: #3d3d3d;
         }
 
         .lista-veiculos {
-            max-height: 350px;
+            max-height: 420px;
             overflow-y: auto;
-            padding-right: 5px;
+            padding-right: 6px;
         }
 
         .veiculo {
-            background: rgba(255, 255, 255, 0.07);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
             border-left: 5px solid #00d2ff;
-            animation: entrar 0.4s ease;
+            animation: entrar 0.35s ease;
         }
 
         @keyframes entrar {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(-25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .veiculo-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .nome-veiculo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
         }
 
         .placa {
-            font-size: 1.3rem;
-            font-weight: bold;
-            letter-spacing: 2px;
+            background: #111;
             color: #00d2ff;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            font-size: 1.05rem;
+            border: 1px solid #00d2ff;
         }
 
         .hora {
             font-size: 0.85rem;
-            color: #aaa;
+            color: #999;
         }
 
         .info {
             font-size: 0.95rem;
-            line-height: 1.5;
-            color: #ddd;
+            line-height: 1.6;
+            color: #ccc;
         }
 
         .info span {
@@ -169,12 +188,13 @@
 
         .vazio {
             text-align: center;
-            color: #777;
-            padding: 40px 20px;
+            color: #666;
+            padding: 50px 20px;
             font-style: italic;
+            font-size: 1.05rem;
         }
 
-        /* Scrollbar personalizada */
+        /* Scrollbar */
         .lista-veiculos::-webkit-scrollbar {
             width: 8px;
         }
@@ -191,9 +211,9 @@
 <body>
     <div class="container">
         <h1>🚗 Estacionamento Digital</h1>
-        <p class="subtitle">Gera CPF + GR automaticamente • Controle de vagas</p>
+        <p class="subtitle">Gera Nome + CPF + GR + Placa automaticamente</p>
 
-        <div class="vagas-box">
+        <div class="vagas-box" id="vagasBox">
             <div class="vagas-numero" id="vagasSobrando">12</div>
             <div class="vagas-texto">vagas sobrando</div>
         </div>
@@ -210,20 +230,29 @@
     </div>
 
     <script>
-        // Configuração inicial
+        // Configuração
         let vagasTotais = 12;
         let vagasOcupadas = 0;
         let veiculos = [];
 
-        // Gera CPF válido (com dígitos verificadores corretos)
+        // Lista de nomes de veículos (modelos comuns no Brasil)
+        const nomesVeiculos = [
+            "Volkswagen Gol", "Chevrolet Onix", "Fiat Argo", "Hyundai HB20",
+            "Toyota Corolla", "Honda Civic", "Volkswagen Polo", "Fiat Mobi",
+            "Renault Kwid", "Jeep Compass", "Toyota Hilux", "Ford Ranger",
+            "Chevrolet Tracker", "Volkswagen T-Cross", "Honda HR-V", "Nissan Kicks",
+            "Fiat Strada", "Volkswagen Saveiro", "Toyota Yaris", "Chevrolet Cruze",
+            "Hyundai Creta", "Jeep Renegade", "Fiat Toro", "Volkswagen Virtus",
+            "Honda City", "Nissan Versa", "Renault Duster", "Mitsubishi L200"
+        ];
+
+        // Gera CPF válido
         function gerarCPF() {
-            const n = Array.from({length: 9}, () => Math.floor(Math.random() * 10));
-            
-            // Primeiro dígito verificador
+            const n = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10));
+
             let d1 = n.reduce((acc, num, i) => acc + num * (10 - i), 0) % 11;
             d1 = d1 < 2 ? 0 : 11 - d1;
-            
-            // Segundo dígito verificador
+
             let d2 = [...n, d1].reduce((acc, num, i) => acc + num * (11 - i), 0) % 11;
             d2 = d2 < 2 ? 0 : 11 - d2;
 
@@ -231,7 +260,7 @@
             return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
         }
 
-        // Gera GR (Guia de Recolhimento fictícia)
+        // Gera GR fictícia
         function gerarGR() {
             const ano = new Date().getFullYear();
             const seq = String(Math.floor(Math.random() * 999999)).padStart(6, '0');
@@ -239,7 +268,7 @@
             return `GR-${ano}-${seq}-${controle}`;
         }
 
-        // Gera placa aleatória (padrão Mercosul)
+        // Gera placa Mercosul
         function gerarPlaca() {
             const letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             const l1 = letras[Math.floor(Math.random() * 26)];
@@ -252,88 +281,103 @@
             return `${l1}${l2}${l3}${n1}${l4}${n2}${n3}`;
         }
 
-        // Formata hora atual
-        function horaAtual() {
-            const agora = new Date();
-            return agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        // Escolhe nome aleatório do veículo
+        function gerarNomeVeiculo() {
+            return nomesVeiculos[Math.floor(Math.random() * nomesVeiculos.length)];
         }
 
-        // Atualiza o contador de vagas
+        // Hora atual
+        function horaAtual() {
+            return new Date().toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Atualiza contador de vagas
         function atualizarVagas() {
             const sobrando = vagasTotais - vagasOcupadas;
             document.getElementById('vagasSobrando').textContent = sobrando;
-            
-            // Muda a cor se estiver quase cheio
-            const box = document.querySelector('.vagas-box');
+
+            const box = document.getElementById('vagasBox');
+            const numero = document.getElementById('vagasSobrando');
+
             if (sobrando <= 3) {
                 box.style.borderColor = '#ff416c';
-                document.getElementById('vagasSobrando').style.color = '#ff416c';
+                numero.style.color = '#ff416c';
+            } else if (sobrando <= 6) {
+                box.style.borderColor = '#f7b731';
+                numero.style.color = '#f7b731';
             } else {
                 box.style.borderColor = '#00d2ff';
-                document.getElementById('vagasSobrando').style.color = '#00d2ff';
+                numero.style.color = '#00d2ff';
             }
         }
 
-        // Renderiza a lista de veículos
+        // Renderiza lista
         function renderizar() {
             const lista = document.getElementById('lista');
-            
+
             if (veiculos.length === 0) {
                 lista.innerHTML = '<div class="vazio">Nenhum veículo estacionado ainda...</div>';
                 return;
             }
 
-            lista.innerHTML = veiculos.map((v, i) => `
+            lista.innerHTML = veiculos.map(v => `
                 <div class="veiculo">
                     <div class="veiculo-header">
+                        <div class="nome-veiculo">${v.nome}</div>
                         <div class="placa">${v.placa}</div>
-                        <div class="hora">${v.hora}</div>
                     </div>
                     <div class="info">
                         CPF: <span>${v.cpf}</span><br>
-                        GR: <span>${v.gr}</span>
+                        GR: <span>${v.gr}</span><br>
+                        <span style="color:#999; font-size:0.85rem;">Entrada: ${v.hora}</span>
                     </div>
                 </div>
             `).join('');
         }
 
-        // Estacionar veículo
+        // Estacionar
         function estacionar() {
             if (vagasOcupadas >= vagasTotais) {
-                alert('🚫 Estacionamento lotado! Não há vagas sobrando.');
+                alert('🚫 Estacionamento lotado!\nNão há vagas sobrando.');
                 return;
             }
 
             const veiculo = {
+                nome: gerarNomeVeiculo(),
                 placa: gerarPlaca(),
                 cpf: gerarCPF(),
                 gr: gerarGR(),
                 hora: horaAtual()
             };
 
-            veiculos.unshift(veiculo); // adiciona no topo
+            veiculos.unshift(veiculo);
             vagasOcupadas++;
-            
+
             atualizarVagas();
             renderizar();
         }
 
-        // Liberar 1 vaga (remove o mais antigo)
+        // Liberar 1 vaga
         function liberar() {
             if (vagasOcupadas === 0) {
                 alert('Não há veículos para liberar.');
                 return;
             }
 
-            veiculos.pop(); // remove o último (mais antigo)
+            veiculos.pop();
             vagasOcupadas--;
-            
+
             atualizarVagas();
             renderizar();
         }
 
         // Limpar tudo
         function limparTudo() {
+            if (veiculos.length === 0) return;
+
             if (confirm('Tem certeza que deseja liberar todas as vagas?')) {
                 veiculos = [];
                 vagasOcupadas = 0;
