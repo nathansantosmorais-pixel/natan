@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estacionamento Digital - Login</title>
+    <title>Estacionamento Digital - Cobrança + Ticket</title>
     <style>
         * {
             margin: 0;
@@ -46,28 +46,28 @@
             font-size: 0.93rem;
         }
 
-        /* ===== LOGIN ===== */
+        /* LOGIN */
         #tela-login {
             max-width: 400px;
             margin: 40px auto 0;
         }
 
-        .form-login {
+        .form-login, .form-cadastro {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
         }
 
-        .form-login label {
+        .form-login label, .form-cadastro label {
             font-size: 0.9rem;
             color: #aaa;
             margin-bottom: 4px;
             display: block;
         }
 
-        .form-login input {
+        .form-login input, .form-cadastro input {
             width: 100%;
-            padding: 13px 14px;
+            padding: 12px 14px;
             border-radius: 8px;
             border: 1px solid #444;
             background: #000;
@@ -75,24 +75,23 @@
             font-size: 1rem;
         }
 
-        .form-login input:focus {
+        .form-login input:focus, .form-cadastro input:focus {
             outline: none;
             border-color: #fff;
         }
 
-        .btn-login {
+        .btn-login, .btn-salvar, .btn-estacionar, .btn-imprimir {
             background: #fff;
             color: #000;
-            padding: 14px;
+            padding: 13px;
             border: none;
             border-radius: 8px;
             font-weight: 700;
-            font-size: 1.05rem;
+            font-size: 1rem;
             cursor: pointer;
-            margin-top: 8px;
         }
 
-        .btn-login:hover {
+        .btn-login:hover, .btn-salvar:hover, .btn-estacionar:hover, .btn-imprimir:hover {
             background: #ddd;
         }
 
@@ -104,7 +103,7 @@
             display: none;
         }
 
-        /* ===== MENU ===== */
+        /* MENU */
         .menu {
             display: flex;
             gap: 10px;
@@ -152,19 +151,8 @@
         }
 
         .btn-estacionar {
-            background: #fff;
-            color: #000;
             flex: 1;
             min-width: 160px;
-            padding: 13px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .btn-estacionar:hover {
-            background: #ddd;
         }
 
         .btn-limpar {
@@ -209,7 +197,7 @@
         }
 
         .lista-veiculos {
-            max-height: 520px;
+            max-height: 480px;
             overflow-y: auto;
             padding-right: 5px;
         }
@@ -220,7 +208,6 @@
             padding: 16px;
             margin-bottom: 12px;
             border-left: 4px solid #fff;
-            position: relative;
             border: 1px solid #333;
         }
 
@@ -296,50 +283,6 @@
             background: #ddd;
         }
 
-        .form-cadastro {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .form-cadastro label {
-            font-size: 0.9rem;
-            color: #aaa;
-            margin-bottom: 4px;
-            display: block;
-        }
-
-        .form-cadastro input {
-            width: 100%;
-            padding: 12px 14px;
-            border-radius: 8px;
-            border: 1px solid #444;
-            background: #000;
-            color: #fff;
-            font-size: 1rem;
-        }
-
-        .form-cadastro input:focus {
-            outline: none;
-            border-color: #fff;
-        }
-
-        .btn-salvar {
-            background: #fff;
-            color: #000;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 1.05rem;
-            cursor: pointer;
-            margin-top: 8px;
-        }
-
-        .btn-salvar:hover {
-            background: #ddd;
-        }
-
         .cliente-card {
             background: #1a1a1a;
             border-radius: 10px;
@@ -390,14 +333,119 @@
             color: #fff;
         }
 
-        .lista-veiculos::-webkit-scrollbar,
-        #listaClientes::-webkit-scrollbar {
-            width: 7px;
+        /* ===== TICKET / COBRANÇA ===== */
+        .modal-ticket {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
-        .lista-veiculos::-webkit-scrollbar-thumb,
-        #listaClientes::-webkit-scrollbar-thumb {
-            background: #555;
+
+        .modal-ticket.ativo {
+            display: flex;
+        }
+
+        .ticket {
+            background: #fff;
+            color: #000;
+            width: 100%;
+            max-width: 380px;
+            padding: 25px;
             border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .ticket h2 {
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            border-bottom: 2px dashed #000;
+            padding-bottom: 10px;
+        }
+
+        .ticket .empresa {
+            text-align: center;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .ticket .linha {
+            display: flex;
+            justify-content: space-between;
+            margin: 6px 0;
+            font-size: 0.95rem;
+        }
+
+        .ticket .total {
+            border-top: 2px dashed #000;
+            margin-top: 15px;
+            padding-top: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .ticket .botoes-ticket {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .ticket .botoes-ticket button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-fechar-ticket {
+            background: #222;
+            color: #fff;
+        }
+
+        .precos {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 18px;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        .precos strong {
+            color: #fff;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .ticket, .ticket * {
+                visibility: visible;
+            }
+            .ticket {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+            }
+            .botoes-ticket {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -406,23 +454,23 @@
         <h1>Estacionamento Digital</h1>
         <p class="subtitle" id="subtitulo">Faça login para continuar</p>
 
-        <!-- ===== TELA DE LOGIN ===== -->
+        <!-- LOGIN -->
         <div id="tela-login" class="tela ativa">
             <form class="form-login" onsubmit="fazerLogin(event)">
                 <div>
                     <label>Usuário</label>
-                    <input type="text" id="usuario" required placeholder="Digite o usuário" autocomplete="username">
+                    <input type="text" id="usuario" required placeholder="Digite o usuário">
                 </div>
                 <div>
                     <label>Senha</label>
-                    <input type="password" id="senha" required placeholder="Digite a senha" autocomplete="current-password">
+                    <input type="password" id="senha" required placeholder="Digite a senha">
                 </div>
                 <button type="submit" class="btn-login">Entrar</button>
                 <div class="erro-login" id="erroLogin">Usuário ou senha incorretos</div>
             </form>
         </div>
 
-        <!-- ===== SISTEMA (aparece depois do login) ===== -->
+        <!-- SISTEMA -->
         <div id="sistema" style="display: none;">
             <div class="menu">
                 <button class="ativo" onclick="mostrarTela('cadastro', this)">Cadastrar Cliente</button>
@@ -430,7 +478,7 @@
                 <button onclick="mostrarTela('estacionamento', this)">Estacionamento</button>
             </div>
 
-            <!-- TELA CADASTRO -->
+            <!-- CADASTRO -->
             <div id="tela-cadastro" class="tela ativa">
                 <form class="form-cadastro" onsubmit="cadastrarCliente(event)">
                     <div>
@@ -453,15 +501,21 @@
                 </form>
             </div>
 
-            <!-- TELA CLIENTES -->
+            <!-- CLIENTES -->
             <div id="tela-clientes" class="tela">
                 <div id="listaClientes">
                     <div class="vazio">Nenhum cliente cadastrado ainda...</div>
                 </div>
             </div>
 
-            <!-- TELA ESTACIONAMENTO -->
+            <!-- ESTACIONAMENTO -->
             <div id="tela-estacionamento" class="tela">
+                <div class="precos">
+                    <strong>Tabela de Preços:</strong><br>
+                    Até 1 hora → R$ 12,00<br>
+                    Cada hora adicional → R$ 6,00
+                </div>
+
                 <div class="selecao-cliente">
                     <label>Selecionar Cliente (opcional):</label>
                     <select id="selectCliente">
@@ -483,8 +537,14 @@
         </div>
     </div>
 
+    <!-- MODAL DO TICKET -->
+    <div class="modal-ticket" id="modalTicket">
+        <div class="ticket" id="conteudoTicket">
+            <!-- preenchido via JS -->
+        </div>
+    </div>
+
     <script>
-        // Credenciais de acesso
         const USUARIO_CORRETO = "admin";
         const SENHA_CORRETA = "1234";
 
@@ -492,17 +552,16 @@
         let vagasOcupadas = [];
         let vagasLivres = Array.from({ length: TOTAL_VAGAS }, (_, i) => i + 1);
         let clientes = [];
+        let veiculoSaindo = null; // guarda o veículo que está saindo
 
         const nomesPessoas = [
             "Ana Silva", "João Santos", "Maria Oliveira", "Pedro Costa", "Juliana Souza",
-            "Carlos Pereira", "Fernanda Lima", "Lucas Almeida", "Patrícia Rocha", "Rafael Martins",
-            "Camila Ferreira", "Bruno Carvalho", "Larissa Gomes", "Gabriel Ribeiro", "Beatriz Nunes"
+            "Carlos Pereira", "Fernanda Lima", "Lucas Almeida", "Patrícia Rocha", "Rafael Martins"
         ];
 
         const nomesVeiculos = [
             "Volkswagen Gol", "Chevrolet Onix", "Fiat Argo", "Hyundai HB20", "Toyota Corolla",
-            "Honda Civic", "Volkswagen Polo", "Fiat Mobi", "Renault Kwid", "Jeep Compass",
-            "Toyota Hilux", "Ford Ranger", "Chevrolet Tracker", "Volkswagen T-Cross", "Honda HR-V"
+            "Honda Civic", "Volkswagen Polo", "Fiat Mobi", "Renault Kwid", "Jeep Compass"
         ];
 
         function gerarCPF() {
@@ -529,18 +588,20 @@
             return new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
         }
 
+        function dataHoraAtual() {
+            return new Date().toLocaleString('pt-BR');
+        }
+
         // ===== LOGIN =====
         function fazerLogin(e) {
             e.preventDefault();
-
             const usuario = document.getElementById('usuario').value.trim();
             const senha = document.getElementById('senha').value;
 
             if (usuario === USUARIO_CORRETO && senha === SENHA_CORRETA) {
-                document.getElementById('tela-login').classList.remove('ativa');
                 document.getElementById('tela-login').style.display = 'none';
                 document.getElementById('sistema').style.display = 'block';
-                document.getElementById('subtitulo').textContent = 'Cadastro de Clientes + Controle de Veículos';
+                document.getElementById('subtitulo').textContent = 'Cobrança + Ticket + Controle de Veículos';
                 document.getElementById('erroLogin').style.display = 'none';
             } else {
                 document.getElementById('erroLogin').style.display = 'block';
@@ -551,11 +612,9 @@
             if (confirm('Deseja sair do sistema?')) {
                 document.getElementById('sistema').style.display = 'none';
                 document.getElementById('tela-login').style.display = 'block';
-                document.getElementById('tela-login').classList.add('ativa');
                 document.getElementById('subtitulo').textContent = 'Faça login para continuar';
                 document.getElementById('usuario').value = '';
                 document.getElementById('senha').value = '';
-                document.getElementById('erroLogin').style.display = 'none';
             }
         }
 
@@ -563,7 +622,6 @@
         function mostrarTela(nome, botao) {
             document.querySelectorAll('#sistema .tela').forEach(t => t.classList.remove('ativa'));
             document.querySelectorAll('.menu button').forEach(b => b.classList.remove('ativo'));
-
             document.getElementById('tela-' + nome).classList.add('ativa');
             botao.classList.add('ativo');
 
@@ -574,7 +632,6 @@
         // ===== CLIENTES =====
         function cadastrarCliente(e) {
             e.preventDefault();
-
             const nome = document.getElementById('nomeCliente').value.trim();
             const cpf = document.getElementById('cpfCliente').value.trim();
             const telefone = document.getElementById('telefoneCliente').value.trim();
@@ -584,31 +641,26 @@
                 alert('Nome e CPF são obrigatórios!');
                 return;
             }
-
             if (clientes.some(c => c.cpf === cpf)) {
                 alert('Já existe um cliente com este CPF!');
                 return;
             }
 
             clientes.push({ nome, cpf, telefone, email });
-
             document.getElementById('nomeCliente').value = '';
             document.getElementById('cpfCliente').value = '';
             document.getElementById('telefoneCliente').value = '';
             document.getElementById('emailCliente').value = '';
-
             alert('Cliente cadastrado com sucesso!');
             atualizarSelectClientes();
         }
 
         function renderizarClientes() {
             const lista = document.getElementById('listaClientes');
-
             if (clientes.length === 0) {
                 lista.innerHTML = '<div class="vazio">Nenhum cliente cadastrado ainda...</div>';
                 return;
             }
-
             lista.innerHTML = clientes.map(c => `
                 <div class="cliente-card">
                     <div class="cliente-nome">${c.nome}</div>
@@ -624,7 +676,6 @@
         function atualizarSelectClientes() {
             const select = document.getElementById('selectCliente');
             select.innerHTML = '<option value="">-- Gerar cliente aleatório --</option>';
-
             clientes.forEach((c, i) => {
                 const opt = document.createElement('option');
                 opt.value = i;
@@ -636,7 +687,6 @@
         // ===== ESTACIONAMENTO =====
         function renderizar() {
             const lista = document.getElementById('lista');
-
             if (vagasOcupadas.length === 0) {
                 lista.innerHTML = '<div class="vazio">Nenhum veículo estacionado ainda...</div>';
                 return;
@@ -653,34 +703,32 @@
                     </div>
                     <div class="horarios">
                         <div class="horario"><strong>Entrada:</strong> ${v.entrada}</div>
-                        <div class="horario"><strong>Saída:</strong> ${v.saida || '—'}</div>
                     </div>
-                    ${!v.saida ? `<button class="btn-saida" onclick="registrarSaida(${v.vaga})">Registrar Saída</button>` : ''}
+                    <button class="btn-saida" onclick="iniciarSaida(${v.vaga})">Registrar Saída + Cobrar</button>
                 </div>
             `).join('');
         }
 
         function estacionar() {
             if (vagasLivres.length === 0) {
-                alert('Estacionamento lotado! Todas as 30 vagas estão ocupadas.');
+                alert('Estacionamento lotado!');
                 return;
             }
 
             const select = document.getElementById('selectCliente');
             const indice = select.value;
-
             let pessoa, cpf;
 
             if (indice !== '') {
-                const cliente = clientes[indice];
-                pessoa = cliente.nome;
-                cpf = cliente.cpf;
+                pessoa = clientes[indice].nome;
+                cpf = clientes[indice].cpf;
             } else {
                 pessoa = nomesPessoas[Math.floor(Math.random() * nomesPessoas.length)];
                 cpf = gerarCPF();
             }
 
             const numeroVaga = vagasLivres.shift();
+            const agora = new Date();
 
             vagasOcupadas.push({
                 vaga: numeroVaga,
@@ -689,26 +737,94 @@
                 placa: gerarPlaca(),
                 cpf,
                 gr: gerarGR(),
-                entrada: horaAtual(),
+                entrada: agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+                entradaDate: agora, // para calcular o tempo
                 saida: null
             });
 
             renderizar();
         }
 
-        function registrarSaida(numeroVaga) {
+        // ===== COBRANÇA + TICKET =====
+        function calcularValor(minutos) {
+            if (minutos <= 60) return 12.00;
+            const horasExtras = Math.ceil((minutos - 60) / 60);
+            return 12.00 + (horasExtras * 6.00);
+        }
+
+        function formatarTempo(minutos) {
+            const h = Math.floor(minutos / 60);
+            const m = minutos % 60;
+            if (h === 0) return `${m} min`;
+            if (m === 0) return `${h}h`;
+            return `${h}h ${m}min`;
+        }
+
+        function iniciarSaida(numeroVaga) {
             const index = vagasOcupadas.findIndex(v => v.vaga === numeroVaga);
             if (index === -1) return;
 
-            vagasOcupadas[index].saida = horaAtual();
-            renderizar();
+            const veiculo = vagasOcupadas[index];
+            const saidaDate = new Date();
+            const diffMs = saidaDate - veiculo.entradaDate;
+            const minutos = Math.max(1, Math.ceil(diffMs / 60000)); // mínimo 1 minuto
+            const valor = calcularValor(minutos);
+            const tempoFormatado = formatarTempo(minutos);
+            const saidaHora = saidaDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-            setTimeout(() => {
-                const liberado = vagasOcupadas.splice(index, 1)[0];
-                vagasLivres.push(liberado.vaga);
-                vagasLivres.sort((a, b) => a - b);
-                renderizar();
-            }, 1400);
+            veiculoSaindo = { ...veiculo, index, saidaHora, minutos, valor, tempoFormatado };
+
+            // Monta o ticket
+            document.getElementById('conteudoTicket').innerHTML = `
+                <h2>TICKET DE ESTACIONAMENTO</h2>
+                <div class="empresa">Estacionamento Digital<br>CNPJ: 00.000.000/0001-00</div>
+                
+                <div class="linha"><span>Cliente:</span> <strong>${veiculo.pessoa}</strong></div>
+                <div class="linha"><span>CPF:</span> <span>${veiculo.cpf}</span></div>
+                <div class="linha"><span>Veículo:</span> <span>${veiculo.veiculo}</span></div>
+                <div class="linha"><span>Placa:</span> <strong>${veiculo.placa}</strong></div>
+                <div class="linha"><span>GR:</span> <span>${veiculo.gr}</span></div>
+                
+                <div style="margin: 12px 0; border-top: 1px dashed #000;"></div>
+                
+                <div class="linha"><span>Entrada:</span> <span>${veiculo.entrada}</span></div>
+                <div class="linha"><span>Saída:</span> <span>${saidaHora}</span></div>
+                <div class="linha"><span>Tempo:</span> <strong>${tempoFormatado}</strong></div>
+                
+                <div class="total">
+                    <span>TOTAL A PAGAR</span>
+                    <span>R$ ${valor.toFixed(2).replace('.', ',')}</span>
+                </div>
+                
+                <div style="text-align:center; margin-top:15px; font-size:0.8rem; color:#555;">
+                    ${dataHoraAtual()}
+                </div>
+
+                <div class="botoes-ticket">
+                    <button class="btn-imprimir" onclick="imprimirTicket()">Imprimir Ticket</button>
+                    <button class="btn-fechar-ticket" onclick="confirmarPagamento()">Pagamento OK</button>
+                </div>
+            `;
+
+            document.getElementById('modalTicket').classList.add('ativo');
+        }
+
+        function imprimirTicket() {
+            window.print();
+        }
+
+        function confirmarPagamento() {
+            if (!veiculoSaindo) return;
+
+            // Remove o veículo
+            vagasOcupadas.splice(veiculoSaindo.index, 1);
+            vagasLivres.push(veiculoSaindo.vaga);
+            vagasLivres.sort((a, b) => a - b);
+
+            veiculoSaindo = null;
+            document.getElementById('modalTicket').classList.remove('ativo');
+            renderizar();
+            alert('Pagamento confirmado! Vaga liberada.');
         }
 
         function limparTudo() {
@@ -720,17 +836,13 @@
             }
         }
 
-        // Máscara de CPF
+        // Máscara CPF
         document.getElementById('cpfCliente').addEventListener('input', function(e) {
             let v = e.target.value.replace(/\D/g, '');
             if (v.length > 11) v = v.slice(0, 11);
-            if (v.length > 9) {
-                v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, '$1.$2.$3-$4');
-            } else if (v.length > 6) {
-                v = v.replace(/(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
-            } else if (v.length > 3) {
-                v = v.replace(/(\d{3})(\d{0,3})/, '$1.$2');
-            }
+            if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, '$1.$2.$3-$4');
+            else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
+            else if (v.length > 3) v = v.replace(/(\d{3})(\d{0,3})/, '$1.$2');
             e.target.value = v;
         });
     </script>
