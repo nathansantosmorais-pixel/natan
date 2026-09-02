@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estacionamento Digital + Cadastro de Clientes</title>
+    <title>Estacionamento Digital - Preto e Branco</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background: #000;
             min-height: 100vh;
             color: #fff;
             display: flex;
@@ -23,21 +23,20 @@
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
+            background: #111;
+            border-radius: 16px;
             padding: 28px;
             width: 100%;
             max-width: 900px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
+            border: 1px solid #333;
         }
 
         h1 {
             text-align: center;
             margin-bottom: 6px;
             font-size: 1.85rem;
-            color: #00d2ff;
+            color: #fff;
         }
 
         .subtitle {
@@ -58,22 +57,24 @@
             flex: 1;
             min-width: 140px;
             padding: 12px;
-            border: none;
-            border-radius: 10px;
+            border: 1px solid #444;
+            border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            background: rgba(255,255,255,0.08);
+            background: #1a1a1a;
             color: #ccc;
-            transition: 0.25s;
+            transition: 0.2s;
         }
 
         .menu button.ativo {
-            background: linear-gradient(135deg, #00b09b, #00d2ff);
+            background: #fff;
             color: #000;
+            border-color: #fff;
         }
 
         .menu button:hover {
-            background: rgba(255,255,255,0.15);
+            background: #2a2a2a;
+            color: #fff;
         }
 
         .tela {
@@ -84,28 +85,6 @@
             display: block;
         }
 
-        .vagas-box {
-            background: rgba(0, 210, 255, 0.12);
-            border: 2px solid #00d2ff;
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .vagas-numero {
-            font-size: 3.5rem;
-            font-weight: 700;
-            color: #00d2ff;
-            line-height: 1;
-        }
-
-        .vagas-texto {
-            font-size: 1.05rem;
-            margin-top: 5px;
-            color: #ccc;
-        }
-
         .botoes-acao {
             display: flex;
             gap: 12px;
@@ -114,34 +93,43 @@
         }
 
         .btn-estacionar {
-            background: linear-gradient(135deg, #00b09b, #96c93d);
-            color: white;
+            background: #fff;
+            color: #000;
             flex: 1;
             min-width: 160px;
             padding: 13px;
             border: none;
-            border-radius: 10px;
-            font-weight: 600;
+            border-radius: 8px;
+            font-weight: 700;
             cursor: pointer;
+        }
+
+        .btn-estacionar:hover {
+            background: #ddd;
         }
 
         .btn-limpar {
-            background: #2c2c2c;
-            color: #eee;
+            background: #222;
+            color: #fff;
             flex: 1;
             min-width: 140px;
             padding: 13px;
-            border: none;
-            border-radius: 10px;
+            border: 1px solid #555;
+            border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
         }
 
+        .btn-limpar:hover {
+            background: #333;
+        }
+
         .selecao-cliente {
-            background: rgba(255,255,255,0.05);
+            background: #1a1a1a;
             padding: 14px;
-            border-radius: 12px;
+            border-radius: 10px;
             margin-bottom: 18px;
+            border: 1px solid #333;
         }
 
         .selecao-cliente label {
@@ -154,60 +142,50 @@
         .selecao-cliente select {
             width: 100%;
             padding: 10px;
-            border-radius: 8px;
+            border-radius: 6px;
             border: 1px solid #444;
-            background: #1a1a2e;
+            background: #000;
             color: #fff;
             font-size: 1rem;
         }
 
         .lista-veiculos {
-            max-height: 480px;
+            max-height: 520px;
             overflow-y: auto;
             padding-right: 5px;
         }
 
         .veiculo {
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 14px;
+            background: #1a1a1a;
+            border-radius: 12px;
             padding: 16px;
             margin-bottom: 12px;
-            border-left: 5px solid #00d2ff;
+            border-left: 4px solid #fff;
             position: relative;
-        }
-
-        .vaga-numero {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            background: #00d2ff;
-            color: #000;
-            font-weight: 800;
-            font-size: 0.88rem;
-            padding: 4px 10px;
-            border-radius: 20px;
+            border: 1px solid #333;
         }
 
         .nome-pessoa {
             font-size: 1.12rem;
             font-weight: 700;
+            color: #fff;
         }
 
         .nome-veiculo {
             font-size: 0.92rem;
-            color: #00d2ff;
+            color: #ccc;
             margin-top: 2px;
         }
 
         .placa {
-            background: #111;
-            color: #00d2ff;
+            background: #000;
+            color: #fff;
             padding: 3px 10px;
             border-radius: 6px;
             font-weight: 700;
             letter-spacing: 1px;
             font-size: 0.95rem;
-            border: 1px solid #00d2ff;
+            border: 1px solid #fff;
             display: inline-block;
             margin-top: 6px;
         }
@@ -215,12 +193,12 @@
         .info {
             font-size: 0.9rem;
             line-height: 1.6;
-            color: #ccc;
+            color: #bbb;
             margin-top: 8px;
         }
 
         .info span {
-            color: #96c93d;
+            color: #fff;
             font-weight: 600;
         }
 
@@ -233,25 +211,30 @@
         }
 
         .horario {
-            background: rgba(255,255,255,0.06);
+            background: #111;
             padding: 5px 11px;
-            border-radius: 8px;
+            border-radius: 6px;
+            border: 1px solid #333;
         }
 
         .horario strong {
-            color: #00d2ff;
+            color: #fff;
         }
 
         .btn-saida {
             margin-top: 12px;
-            background: linear-gradient(135deg, #ff416c, #ff4b2b);
-            color: white;
+            background: #fff;
+            color: #000;
             padding: 8px 14px;
             font-size: 0.88rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
+        }
+
+        .btn-saida:hover {
+            background: #ddd;
         }
 
         .form-cadastro {
@@ -262,7 +245,7 @@
 
         .form-cadastro label {
             font-size: 0.9rem;
-            color: #bbb;
+            color: #aaa;
             margin-bottom: 4px;
             display: block;
         }
@@ -270,24 +253,24 @@
         .form-cadastro input {
             width: 100%;
             padding: 12px 14px;
-            border-radius: 10px;
+            border-radius: 8px;
             border: 1px solid #444;
-            background: #1a1a2e;
+            background: #000;
             color: #fff;
             font-size: 1rem;
         }
 
         .form-cadastro input:focus {
             outline: none;
-            border-color: #00d2ff;
+            border-color: #fff;
         }
 
         .btn-salvar {
-            background: linear-gradient(135deg, #00b09b, #00d2ff);
+            background: #fff;
             color: #000;
             padding: 14px;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             font-weight: 700;
             font-size: 1.05rem;
             cursor: pointer;
@@ -295,31 +278,33 @@
         }
 
         .btn-salvar:hover {
-            opacity: 0.9;
+            background: #ddd;
         }
 
         .cliente-card {
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 12px;
+            background: #1a1a1a;
+            border-radius: 10px;
             padding: 15px;
             margin-bottom: 12px;
-            border-left: 4px solid #96c93d;
+            border-left: 4px solid #fff;
+            border: 1px solid #333;
         }
 
         .cliente-nome {
             font-size: 1.1rem;
             font-weight: 700;
             margin-bottom: 6px;
+            color: #fff;
         }
 
         .cliente-info {
             font-size: 0.9rem;
-            color: #ccc;
+            color: #bbb;
             line-height: 1.5;
         }
 
         .cliente-info span {
-            color: #96c93d;
+            color: #fff;
         }
 
         .vazio {
@@ -335,24 +320,23 @@
         }
         .lista-veiculos::-webkit-scrollbar-thumb,
         #listaClientes::-webkit-scrollbar-thumb {
-            background: #00d2ff;
+            background: #555;
             border-radius: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🚗 Estacionamento Digital</h1>
-        <p class="subtitle">Cadastro de Clientes + Controle de Vagas 1 a 30</p>
+        <h1>Estacionamento Digital</h1>
+        <p class="subtitle">Cadastro de Clientes + Controle de Veículos</p>
 
-        <!-- MENU - Cadastro em primeiro -->
         <div class="menu">
             <button class="ativo" onclick="mostrarTela('cadastro', this)">Cadastrar Cliente</button>
             <button onclick="mostrarTela('clientes', this)">Clientes Cadastrados</button>
             <button onclick="mostrarTela('estacionamento', this)">Estacionamento</button>
         </div>
 
-        <!-- TELA CADASTRO (primeira / ativa) -->
+        <!-- TELA CADASTRO -->
         <div id="tela-cadastro" class="tela ativa">
             <form class="form-cadastro" onsubmit="cadastrarCliente(event)">
                 <div>
@@ -384,11 +368,6 @@
 
         <!-- TELA ESTACIONAMENTO -->
         <div id="tela-estacionamento" class="tela">
-            <div class="vagas-box" id="vagasBox">
-                <div class="vagas-numero" id="vagasSobrando">30</div>
-                <div class="vagas-texto">vagas sobrando</div>
-            </div>
-
             <div class="selecao-cliente">
                 <label>Selecionar Cliente (opcional):</label>
                 <select id="selectCliente">
@@ -521,25 +500,6 @@
             });
         }
 
-        function atualizarVagas() {
-            const sobrando = vagasLivres.length;
-            document.getElementById('vagasSobrando').textContent = sobrando;
-
-            const box = document.getElementById('vagasBox');
-            const numero = document.getElementById('vagasSobrando');
-
-            if (sobrando <= 5) {
-                box.style.borderColor = '#ff416c';
-                numero.style.color = '#ff416c';
-            } else if (sobrando <= 12) {
-                box.style.borderColor = '#f7b731';
-                numero.style.color = '#f7b731';
-            } else {
-                box.style.borderColor = '#00d2ff';
-                numero.style.color = '#00d2ff';
-            }
-        }
-
         function renderizar() {
             const lista = document.getElementById('lista');
 
@@ -548,11 +508,8 @@
                 return;
             }
 
-            const ordenados = [...vagasOcupadas].sort((a, b) => a.vaga - b.vaga);
-
-            lista.innerHTML = ordenados.map(v => `
+            lista.innerHTML = vagasOcupadas.map(v => `
                 <div class="veiculo">
-                    <div class="vaga-numero">Vaga ${String(v.vaga).padStart(2, '0')}</div>
                     <div class="nome-pessoa">${v.pessoa}</div>
                     <div class="nome-veiculo">${v.veiculo}</div>
                     <div class="placa">${v.placa}</div>
@@ -571,7 +528,7 @@
 
         function estacionar() {
             if (vagasLivres.length === 0) {
-                alert('🚫 Estacionamento lotado! Todas as 30 vagas estão ocupadas.');
+                alert('Estacionamento lotado! Todas as 30 vagas estão ocupadas.');
                 return;
             }
 
@@ -602,7 +559,6 @@
                 saida: null
             });
 
-            atualizarVagas();
             renderizar();
         }
 
@@ -617,17 +573,15 @@
                 const liberado = vagasOcupadas.splice(index, 1)[0];
                 vagasLivres.push(liberado.vaga);
                 vagasLivres.sort((a, b) => a - b);
-                atualizarVagas();
                 renderizar();
             }, 1400);
         }
 
         function limparTudo() {
             if (vagasOcupadas.length === 0) return;
-            if (confirm('Tem certeza que deseja liberar todas as vagas?')) {
+            if (confirm('Tem certeza que deseja liberar todos os veículos?')) {
                 vagasOcupadas = [];
                 vagasLivres = Array.from({ length: TOTAL_VAGAS }, (_, i) => i + 1);
-                atualizarVagas();
                 renderizar();
             }
         }
@@ -645,7 +599,6 @@
             e.target.value = v;
         });
 
-        atualizarVagas();
         atualizarSelectClientes();
     </script>
 </body>
